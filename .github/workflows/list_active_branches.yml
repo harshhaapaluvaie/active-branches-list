@@ -35,11 +35,22 @@ jobs:
         # Read all branches
         while IFS= read -r branch; do
           branch_name=${branch##*/}
+          
+          # Remove 'origin/' prefix if present
+          branch_name=${branch_name#origin/}
+
+          # Skip HEAD references
+          if [ "$branch_name" = "HEAD" ]; then
+            continue
+          fi
 
           # Check if the branch is active
-          last_commit_date=$(git log -1 --format=%ct "origin/$branch_name")
-          if [ $last_commit_date -ge $cutoff_date ]; then
-            active_branches+=("$branch_name")
+          if last_commit_date=$(git log -1 --format=%ct "origin/$branch_name" 2>/dev/null); then
+            if [ $last_commit_date -ge $cutoff_date ]; then
+              active_branches+=("$branch_name")
+            fi
+          else
+            echo "Warning: Could not retrieve last commit date for branch '$branch_name'"
           fi
 
         done < all_branches.txt
