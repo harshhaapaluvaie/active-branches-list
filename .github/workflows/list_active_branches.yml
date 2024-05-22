@@ -11,7 +11,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        repository: HenrySchein-C/GEPAngular
+        repository: HenrySchein-C/HSCCV2Dev
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Fetch all branches
@@ -84,4 +84,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: active-branches
-        path: active_branches.xlsx
+        path: CCV2-active_branches.xlsx
