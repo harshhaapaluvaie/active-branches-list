@@ -11,7 +11,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        repository: HenrySchein-C/HSCCV2Dev
+        repository: HenrySchein-C/SiteCoreDev
         token: ${{ secrets.GH_TOKEN }}
 
     - name: Fetch all branches
