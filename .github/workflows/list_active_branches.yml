@@ -84,4 +84,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: active-branches
-        path: CCV2-active_branches.xlsx
+        path: active_branches.xlsx
