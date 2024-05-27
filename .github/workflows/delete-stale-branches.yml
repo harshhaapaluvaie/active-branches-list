@@ -28,7 +28,7 @@ jobs:
           import os
           import openpyxl
           from github import Github
-          from datetime import datetime, timedelta
+          from datetime import datetime, timedelta, timezone
 
           # GitHub authentication
           g = Github(os.getenv('GITHUB_TOKEN'))
@@ -40,7 +40,7 @@ jobs:
 
           # Define stale period (e.g., 2 months)
           stale_period = timedelta(days=60)
-          now = datetime.utcnow()
+          now = datetime.now(timezone.utc)
 
           # Get all branches
           branches = repo.get_branches()
@@ -57,6 +57,8 @@ jobs:
             if branch_name == 'main' or branch_name == 'master':
                 continue
             last_commit = repo.get_branch(branch_name).commit.commit.author.date
+            if last_commit.tzinfo is None:
+                last_commit = last_commit.replace(tzinfo=timezone.utc)
             if now - last_commit > stale_period:
                 try:
                     ref = repo.get_git_ref(f'heads/{branch_name}')
