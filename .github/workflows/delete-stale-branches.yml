@@ -34,12 +34,12 @@ jobs:
           g = Github(os.getenv('GITHUB_TOKEN'))
 
           # Repository details
-          org_name = 'HenrySchein-C'
-          repo_name = 'GEPAngular'
+          org_name = 'NotHarshhaa'
+          repo_name = 'nodejs-app-github-actions'
           repo = g.get_repo(f'{org_name}/{repo_name}')
 
-          # Define stale period (e.g., 6 months)
-          stale_period = timedelta(days=180)
+          # Define stale period (e.g., 2 months)
+          stale_period = timedelta(days=60)
           now = datetime.utcnow()
 
           # Get all branches
