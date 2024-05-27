@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install gitpython openpyxl
+          pip install PyGithub openpyxl
 
       - name: Delete Stale Branches and Generate Report
         env:
