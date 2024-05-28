@@ -1,0 +1,74 @@
+name: Find Stale Branches and Generate Report
+
+on:
+  workflow_dispatch:
+
+jobs:
+  find-stale-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub openpyxl
+
+      - name: Find Stale Branches and Generate Report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          python -c "
+          import os
+          import openpyxl
+          from github import Github
+          from datetime import datetime, timedelta, timezone
+
+          # GitHub authentication
+          g = Github(os.getenv('GITHUB_TOKEN'))
+
+          # Repository details
+          org_name = 'HenrySchein-C'
+          repo_name = 'GEPAngular'
+          repo = g.get_repo(f'{org_name}/{repo_name}')
+
+          # Define stale period (e.g., 12 months)
+          stale_period = timedelta(days=360)
+          now = datetime.now(timezone.utc)
+
+          # Get all branches
+          branches = repo.get_branches()
+
+          # Prepare Excel workbook
+          wb = openpyxl.Workbook()
+          ws = wb.active
+          ws.title = 'Stale Branches'
+          ws.append(['Branch Name', 'Last Commit Date'])
+
+          # Identify stale branches
+          for branch in branches:
+                branch_name = branch.name
+          if branch_name == 'main' or branch_name == 'master':
+                continue
+          last_commit = repo.get_branch(branch_name).commit.commit.author.date
+          if last_commit.tzinfo is None:
+                last_commit = last_commit.replace(tzinfo=timezone.utc)
+          if now - last_commit > stale_period:
+                print(f'Stale branch: {branch_name}, last commit date: {last_commit}')
+                ws.append([branch_name, last_commit.strftime('%Y-%m-%d')])
+
+          # Save the workbook
+          wb.save('stale_branches.xlsx')
+          "
+
+      - name: Upload Stale Branches Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: stale-branches-report
+          path: stale_branches.xlsx
