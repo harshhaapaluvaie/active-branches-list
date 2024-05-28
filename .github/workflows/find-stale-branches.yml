@@ -53,15 +53,15 @@ jobs:
 
           # Identify stale branches
           for branch in branches:
-                branch_name = branch.name
+              branch_name = branch.name
           if branch_name == 'main' or branch_name == 'master':
-                continue
+              continue
           last_commit = repo.get_branch(branch_name).commit.commit.author.date
           if last_commit.tzinfo is None:
-                last_commit = last_commit.replace(tzinfo=timezone.utc)
+              last_commit = last_commit.replace(tzinfo=timezone.utc)
           if now - last_commit > stale_period:
-                print(f'Stale branch: {branch_name}, last commit date: {last_commit}')
-                ws.append([branch_name, last_commit.strftime('%Y-%m-%d')])
+              print(f'Stale branch: {branch_name}, last commit date: {last_commit}')
+              ws.append([branch_name, last_commit.strftime('%Y-%m-%d')])
 
           # Save the workbook
           wb.save('stale_branches.xlsx')
